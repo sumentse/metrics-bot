@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Metric Bot</title>
+
+	<style>
+
+
+#collapsable {
+	display: none;
+	width: 900px;
+}
+
+.clear {
+	clear: both;
+}
+
+.no-bold {
+	font-weight: normal !important;
+}
+
+.label {
+	text-align: center;
+	color:#808080;
+	font-size: 10px;
+	margin-bottom: 5px;
+}
+
+#left-span, #right-span {
+	color:#808080;
+	font-size: 12px;
+	margin-bottom: 5px;
+}
+
+.shadow {
+	width:900px;
+}
+
+.row {
+	height:23px;
+	line-height: 23px;
+	padding: 2px 0px;
+	border-bottom: dotted #bbb 1px;
+}
+
+.row:nth-child(4n+4){
+	border-bottom: none;
+}
+
+.last-child {
+	border-bottom: none;
+}
+
+
+.choice {
+
+	width:100px;
+	float:left;
+}
+
+.first-element {
+	width:85px;
+}
+
+.long-word {
+	width: 182px
+}
+
+.last-element {
+	width: auto;
+}
+
+
+input, button {
+    font-size: inherit;
+    padding: 0.2em;
+    margin: 0.1em 0.2em;
+}
+
+#main {
+	font-family: arial;
+	width: 900px;
+	margin: 0px auto;
+	overflow: hidden;
+}
+
+
+#menu-bar {
+	height: 130px;
+	position: relative;
+	margin-bottom: 15px;
+}
+
+#menu-bar > div {
+	float: left;
+}
+
+#menu-bar .shadow {
+	position: absolute;
+	left: 0px;
+	top: 127px;
+}
+
+#categories-choices, #filter-choices, #process-data {
+	height: 130px;
+	font-size: 11px;
+	position: relative;
+	color: #0071BC;
+}
+
+#categories-choices {
+	width:127px;
+	margin-right: 20px;
+}
+
+#msk-bot {
+	margin-right: 15px;
+	margin-top: 28px;
+}
+
+#msk-bot img {
+	width: 206px;
+}
+
+#categories-choices input, #filter-choices input {
+	margin-right: 5px;
+}
+
+#filter-choices {
+	width:452px;
+	margin-right: 10px;
+}
+
+#process-data {
+	text-align: center;
+	width: 70px;
+}
+
+#process-data span {
+	font-weight: bold;
+	color:black;
+}
+
+#process-data #submit-data {
+	width: 72%;
+	margin: 50% auto;
+	padding: 4px 0px;
+	cursor: pointer;
+	background: #1988D8;
+	color: white;
+	box-shadow: 0px 0px 6px 2px #CCC;
+}
+
+#chart-container {
+	position: relative;
+}
+
+#chart-container #chart-headline {
+	font-weight: bold;
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+
+#chart-container #chart-headline span {
+	font-weight: normal;
+	font-size: 13px;
+	margin-left: 15px;
+}
+
+#chart-container #data-chart {
+	width: 650px;
+	height: 320px;
+	float: left;
+}
+
+#chart-container #data-chart svg {
+	width: 650px;
+}
+
+#data-chart > div:not(.morris-hover) {
+	width: 650px;
+}
+
+#chart-container #data-side-container {
+	width: 250px;
+	height: 320px;
+	float: right;
+	overflow: hidden;
+	margin-right: 0px; /*this will control effects*/
+}
+
+#data-side-container {
+	position: relative;
+}
+
+#data-side-wrapper {
+	position: absolute;
+	top:30px;
+	left: 45px;
+}
+
+#data-side-container img {
+	height: 322px
+}
+
+#data-side-wrapper #data-number {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 15px 0px;
+}
+
+#data-side-wrapper #explaination-text {
+	font-size: 14px;
+}
+
+#main-footer {
+	height: 55px;
+	margin-top: 25px;
+	position: relative;
+}
+
+#main-footer #numeric-slider {
+	position: relative;
+	margin-left: 137px;
+}
+
+
+#customslider {
+	width: 350px;
+}
+
+#main-footer #left-span {
+	position: absolute;
+	left:-34px;
+	top:3px;
+}
+
+#main-footer #right-span {
+	position: absolute;
+	left: 354px;
+	top:3px;
+}
+
+#main-footer #data-slider-label {
+	position: absolute;
+	left:111px;
+	top:23px;
+	
+}
+
+
+	</style>
+	<link href="css/classic.css" rel="stylesheet" type="text/css" />
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+	<link href="css/morris-0.4.3.min.css" rel="stylesheet" type="text/css" />
+
+
+
+	<script src="js/jquery.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+	<script src="js/jQAllRangeSliders-min.js"></script>
+	<script src="js/jquery.mousewheel.min.js"></script>
+	<script src="js/linq.min.js"></script>
+	<script src="js/json2.js"></script>
+	<script src="js/jquery.csv-0.71.min.js"></script> 
+	<script src="js/raphael-min.js"></script>
+	<script src="js/morris-0.4.3.min.js"></script>
+</head>
+<body>
+	<div id="main">
+<!-- FORM INPUT GOES HERE TO CALL ON BACKEND SCRIPT-->
+		<div id="menu-bar">
+			<div id="msk-bot">
+				<img src="assets/robot.png"/><br>
+
+			</div>
+			
+			<div id="categories-choices">
+				<div class="label">1: SELECT DATA</div>
+				<div class="choices-list">
+					
+					<div class="row">
+						<input type="radio" name="metrics" value="Chemotherapy" checked="checked"/>
+						<span>Chemotherapy</span>
+					</div>
+					
+					<div class="row">
+						<input type="radio" name="metrics" value="Inpatient Days"/>
+						<span>Inpatient Days</span>
+					</div>
+					
+					<div class="row">
+						<input type="radio" name="metrics" value="Radiation Therapy"/>
+						<span>Radiation Therapy</span>
+					</div>
+
+					<div class="row last-child">
+						<input type="radio" name="metrics" value="Surgeries"/>
+						<span>Surgeries</span>
+					</div>
+				
+				</div>
+			</div>
+
+			<div id="filter-choices">
+				<div class="label">2: SELECT CANCER TYPE</div>
+				<div class="choices-list">
+					
+					<div class="row">
+						<div class="choice first-element">
+							<input type="radio" name="filter" value="All Types" checked="checked">
+							<span><b>All Types</b></span>
+						</div>
+						<div class="choice">
+							<input type="radio" name="filter" value="Bladder">
+							<span>Bladder</span>
+						</div>
+						<div class="choice">
+							<input type="radio" name="filter" value="Bone">
+							<span>Bone</span>
+						</div>
+						<div class="choice">
+							<input type="radio" name="filter" value="Brain">
+							<span>Brain</span>
+						</div>
+						<div class="choice last-element">
+							<input type="radio" name="filter" value="Breast">
+							<span>Breast</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="choice first-element">
+							<input type="radio" name="filter" value="Colorectal">
+							<span>Colorectal</span>
+						</div>
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Gynecologic">
+							<span>Gynecologic</span>
+						</div>
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Head and Neck">
+							<span>Head &amp; Neck</span>
+						</div>
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Hematologic">
+							<span>Hematologic</span>
+						</div>
+
+						<div class="choice last-element">
+							<input type="radio" name="filter" value="Kidney">
+							<span>Kidney</span>
+						</div>						
+					</div>
+					
+					<div class="row">
+						<div class="choice first-element">
+							<input type="radio" name="filter" value="Liver">
+							<span>Liver</span>
+						</div>
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Lung">
+							<span>Lung</span>
+						</div>						
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Pancreas">
+							<span>Pancreas</span>
+						</div>						
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Prostate">
+							<span>Prostate</span>
+						</div>						
+
+						<div class="choice last-element">
+							<input type="radio" name="filter" value="Skin">
+							<span>Skin</span>	
+						</div>	
+					</div>
+
+					<div class="row last-child">
+
+						<div class="choice first-element">
+							<input type="radio" name="filter" value="Soft Tissue">
+							<span>Soft Tissue</span>
+						</div>	
+
+						<div class="choice">
+							<input type="radio" name="filter" value="Upper Gastrointestinal">
+							<span>Upper GI</span>
+						</div>	
+					</div>				
+				</div>
+			</div>
+
+			<div id="process-data">
+				<div>
+					<div class="label">3: RENDER</div>
+					<div id="submit-data">Visualize</div>
+				</div>
+			</div>
+			<img class="shadow clear" src="assets/menu-shadow.png" alt="divider"/>
+		</div>
+
+
+<!-- CHART CONTAINER AREA -->
+		<div id="collapsable">		
+			<div id="chart-container">
+				<div id="chart-headline"></div>
+				<div id="data-chart"></div>
+				<div id="data-side-container">
+					<img src="assets/vertical-divider.png" alt="vertical divider"/>
+					<div id="data-side-wrapper">
+<!-- 						<div id="date-label"></div>
+						<div id="data-number"></div> -->
+						<div id="explaination-text"></div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+<!-- FOOTER		 -->
+			<div id="main-footer">
+				<div id="numeric-slider">
+					<span id="left-span">LESS</span>
+						<div id="customslider"></div>
+					<span id="right-span">MORE</span>
+					<div id="data-slider-label">Treatment month(s)</div>
+				</div>
+			</div>
+			<img class="shadow" src="assets/menu-shadow.png" alt="divider"/>
+		</div>	
+	</div>
+
+	<script>
+	// this template should use ajax to call on a server script to get the query 		
+
+
+//this is the module and revealing pattern for js	
+	var Commas = (function(){
+		//private methods
+		function add(nStr){
+			nStr += '';
+			x = nStr.split('.');
+			x1 = x[0];
+			x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while (rgx.test(x1)) {
+				x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			}
+			return x1 + x2;
+		}
+
+		function remove(nStr){
+			return nStr.replace(',','');	
+		}
+
+		return {
+			add: add,
+			remove: remove
+		};
+	})();
+
+	var customDate = (function(){
+		var months = {"January":"01", "February":"02", "March":"03", "April":"04", "May":"05", "June":"06", "July":"07", "August":"08", "September":"09", "October":"10", "November":"11", "December":"12"},
+		    keys = {"01":"Jan", "02":"Feb", "03":"Mar", "04":"Apr", "05":"May", "06":"Jun", "07":"Jul", "08":"Aug", "09":"Sep", "10":"Oct", "11": "Nov", "12": "Dec"},
+		    key_full_month = {"01":"January", "02":"February", "03":"March", "04":"April", "05":"May", "06":"June", "07":"July", "08":"August", "09":"September", "10":"October", "11": "November", "12": "December"},
+		    month_obj = {"0":"Jan","1":"Feb","2":"Mar","3":"Apr","4":"May","5":"Jun","6":"Jul", "7":"Aug", "8":"Sep","9":"Oct","10":"Nov","11":"Dec"};
+
+
+		return {
+			key_to_months: function(month){
+				return keys[month]; //return a key
+			},
+			key_to_full_months : function(month){
+				return key_full_month[month];
+			},
+			months_to_key: function(key){
+				return months[key]; //returns a month
+			},
+			getMonth: function(key){
+				return month_obj[key];
+			},
+			format_date: function(dateString){ //must be formated as 2012-01
+				var myDate = (/^(\d{4})-(\d{2})$/g).exec(dateString);
+				return this.key_to_months(myDate[2]) + ' ' + myDate[1];
+			},
+			full_format_date: function(dateString){
+				var myDate = (/^(\d{4})-(\d{2})$/g).exec(dateString);
+				return key_full_month[myDate[2]] + ' ' + myDate[1];
+			}
+		};
+	})();
+
+	//module that handles Queries
+	var Query = (function(){
+		
+		//this handles getting the data for summary all types
+		function get_summary(column, filter){
+			
+
+			try{
+				queryData = Enumerable.From(summaryData, filter)
+						.Where(filter) //an empty filter works for some reason
+						.Select('{date:$.TXYEAR + "\-" + customDate.months_to_key($.TXMONTH), value:parseInt(Commas.remove($.' + column +'))}')
+						.ToArray();	
+
+				Chart.myChart.setData(queryData);
+
+			}
+			catch(e){throw new Error("Something's wrong with the query.")}
+		}
+
+
+		//public functions
+		return {
+			get_summary:get_summary
+		};
+	})();
+
+	Chart = (function($){
+		//everything here is private
+		var myChart; //identifer for the morris chart
+
+		//setting up everything
+		var init = function(targeted_element){
+			//summary data goes here
+			$.ajax({
+				type: 'GET',
+				url: "data-summary.csv", //windows csv
+				dataType:'text',
+				async: false,
+				statusCode: {
+					404: function(){
+						alert('data-summary.csv file not found');
+					}
+				},
+				success: function(text){
+					summaryData = $.csv.toObjects(text);
+				
+				}
+			});
+			//blur data goes here
+			$.ajax({
+				type: 'GET',
+				url: "data-blurb.csv", //windows csv
+				dataType:'text',
+				async: false,
+				statusCode: {
+					404: function(){
+						alert('data-blurb.csv file not found');
+					}
+				},				
+				success: function(text){
+					blurbData = $.csv.toObjects(text);
+				}
+			});
+
+			//treatment data goes here
+			$.ajax({
+				type: 'GET',
+				url: "data.csv", //location of file goes here
+				dataType:'text',
+				async: false,
+				statusCode: {
+					404: function(){
+						alert('data.csv file not found');
+					}
+				},				
+				success: function(text){
+
+					jsonData = $.csv.toObjects(text);
+				
+
+					oldest_date = Enumerable.From(jsonData)
+											.OrderBy('$.TXYEAR')
+											.ThenBy('$.Date_Serial')
+											.Select('{year:parseInt($.TXYEAR), month:$.TXMONTH}')
+											.Take(1)
+											.ToArray();
+					
+					latest_date = Enumerable.From(jsonData)
+											.OrderByDescending('$.TXYEAR')
+											.ThenByDescending('$.Date_Serial')
+											.Select('{year:parseInt($.TXYEAR), month:$.TXMONTH}')
+											.Take(1)
+											.ToArray();
+
+					//this needs to be fix
+					max_range = Enumerable.From(jsonData)
+										  .Where('$.TXYEAR == "' + (latest_date[0]["year"] - 5) + '"')
+										  .Select('{year:parseInt($.TXYEAR), month:$.TXMONTH}')
+										  .OrderBy('$.Date_Serial')
+										  .Take(1)
+										  .ToArray();
+
+					number_of_years = Enumerable.From(jsonData)
+												.Distinct('$.TXYEAR')
+												.Select('$.TXYEAR')
+												.OrderBy()
+												.ToArray();
+
+
+					//the csv data should be formatted correctly for start and end date
+					lower_date_limit = new Date(oldest_date[0]['year'], customDate.months_to_key( oldest_date[0]['month'] ) - 1, 1);
+					
+					upper_date_limit = new Date(latest_date[0]['year'], customDate.months_to_key( latest_date[0]['month'] ) - 1, 1); 
+
+					//start position is 6 year of latest date
+					starting_date_position = new Date(upper_date_limit.getFullYear() - 6,upper_date_limit.getMonth(), 1);
+
+
+				}
+			});
+
+			//setting up the plugin chart
+			this.myChart = Morris.Line({
+						element: targeted_element,
+						data: [],
+						xkey: 'date',
+						ykeys:['value'],
+						labels:['value'],
+						hideHover:'true',
+						lineColors:['#0071BC'],
+						hoverCallback: function (index, options, content){
+							var date = options.data[index].date,
+							    value = options.data[index].value,
+							    dataType = ($('#categories-choices input:checked').attr('value')).replace(' ','_'), //this was needed to keep the column consistent for input value
+							    cancerType = $('#filter-choices input:checked').attr('value'),
+							    month = customDate.key_to_full_months( (date).match(/\d{2}$/g) ),
+							    year = date.match(/^\d{4}/g),
+							    content, text, filter_text;
+
+							text = Enumerable.From(blurbData)
+											 .Where('$.Cancer_Type == "' + cancerType + '"')
+											 .Select('$.' + dataType)
+											 .ToArray()[0];
+
+
+							//error checking if nothing is in the data blurb meaning there wasn't any text on there
+							if(text == null)
+							{
+								filter_text = "";
+							}
+
+							//processing the text by replacing <key> 
+							filter_text = text.replace(/\<Month\>/gi,month).replace(/\<Year\>/gi,year).replace(/\<Value\>/gi,'<b>' + Commas.add(value) + '</b>');
+							$('#explaination-text').html(filter_text)
+							
+							//setup the content view						
+							content = "<div class='morris-hover-row-label'>" +  customDate.format_date(date) + 
+							"</div><div class='morris-hover-point' style='color: #0071BC'>" + Commas.add(value) + "</div>";
+
+							return content;
+
+
+
+						}				
+		
+					});
+
+			//seting up the rangeslider plugin. Please consult 
+			//http://ghusse.github.io/jQRangeSlider/documentation.html
+			$('#customslider').dateRangeSlider({
+				step:{
+					months:1
+				},
+				bounds: {
+					min: lower_date_limit,
+					max: upper_date_limit
+				},
+				range:{
+					min: {
+						months:1
+					},
+					max: {
+						years:6
+					}
+				},
+				defaultValues:{
+					min: starting_date_position,
+					max: upper_date_limit
+				},
+				wheelMode: "zoom",
+				arrows:true,
+				valueLabels:"show",
+				formatter: function(val){
+					return customDate.getMonth(val.getMonth()) + ' ' + val.getFullYear();
+				}
+			});
+		}
+		//returns the public methods and variables
+		return {
+			init:init,
+			myChart: myChart
+		};
+	})(jQuery);
+
+	//initiate chart rendering
+	Chart.init("data-chart");
+	
+
+	//needed to fix the display none bug
+	$('#data-chart > div:not(.morris-hover)').css('width','650px');	
+
+
+	
+	$('#submit-data').click(function(){
+
+		var dataType = $('#categories-choices input:checked').attr('value'),
+			cancerType = $('#filter-choices input:checked').attr('value'),
+			year = number_of_years.slice(-6)[0], 
+			queryData, queryCondition, querySummaryCondition;
+
+		queryCondition = '$.Treatment == "' + dataType + '" && $.Cancer_Type == "' + cancerType + '" && $.TXYEAR >= "' + year + '"';
+
+		querySummaryCondition = '$.TXYEAR >= "' + year + '"';
+		
+		$('#chart-headline').text(dataType + ' – ' + cancerType);
+		$('#chart-headline').append(' <span>Select points for more detail</span>');
+		$('#collapsable').fadeIn("slow");
+
+
+		
+		//if the data type is all type then execute a different query
+		if(cancerType === "All Types")
+		{
+			$('#customslider').dateRangeSlider("values",starting_date_position,upper_date_limit);
+			
+			switch(dataType)
+			{
+				case "Chemotherapy":
+					Query.get_summary("Chemo_All", querySummaryCondition);
+					break;
+				case "Inpatient Days":
+					Query.get_summary("Inpatient_All", querySummaryCondition);
+					break;
+				case "Radiation Therapy":
+					Query.get_summary("Radonc_All", querySummaryCondition);
+					break;
+				case "Surgeries":
+					Query.get_summary("Surgery_All", querySummaryCondition);
+					break;
+				default:
+					throw new Error("The input value for the data type does not exist. Please consult the support desk");
+			}
+		}
+		else
+		{
+			queryData = Enumerable.From(jsonData)
+								  .Where(queryCondition)
+								  .Select('{date:$.TXYEAR + "\-" + customDate.months_to_key($.TXMONTH), value:parseInt(Commas.remove($.Number))}')
+								  .ToArray();	
+
+			//reset the dateRangeSlider to default position
+			$('#customslider').dateRangeSlider("values",starting_date_position,upper_date_limit);
+			
+			//update the chart and text	
+			Chart.myChart.setData(queryData);
+			$('#explaination-text').empty();
+		}
+
+	
+	});	
+
+
+//this was needed to return the excel data function
+function JSDateToExcelDate(inDate) {
+
+    var returnDateTime = 25569.0 + ((inDate.getTime() - (inDate.getTimezoneOffset() * 60 * 1000)) / (1000 * 60 * 60 * 24));
+    return returnDateTime.toString().substr(0,5);
+
+}
+
+//controls the logic of the slider
+$('#customslider').bind("userValuesChanged", function(e, data){
+	var dataType = $('#categories-choices input:checked').attr('value'),
+		cancerType = $('#filter-choices input:checked').attr('value'),
+		query_startDate = JSDateToExcelDate( new Date((data.values.min).getFullYear(), (data.values.min).getMonth(), 1 )),
+		query_endDate = JSDateToExcelDate( new Date((data.values.max).getFullYear(), (data.values.max).getMonth(), 1 )),
+		queryCondition, queryData;
+
+
+	if(cancerType === "All Types")
+	{
+		queryCondition = '$.Date_Serial >= "' + query_startDate + 
+		'" && $.Date_Serial <= "' + query_endDate + '"';
+		
+		switch(dataType)
+		{
+			case "Chemotherapy":
+				Query.get_summary("Chemo_All", queryCondition);
+				break;
+			case "Inpatient Days":
+				Query.get_summary("Inpatient_All", queryCondition);
+				break;
+			case "Radiation Therapy":
+				Query.get_summary("Radonc_All", queryCondition);
+				break;
+			case "Surgeries":
+				Query.get_summary("Surgery_All", queryCondition);
+				break;
+			default:
+				throw new Error("The input value for the data type does not exist. Please consult someone with javascript knowledge");
+		}
+	}
+	else {
+		queryCondition = '$.Treatment == "' + dataType + '" && $.Cancer_Type == "' +
+		cancerType + '" && ($.Date_Serial >= "' + query_startDate + '" && $.Date_Serial <= "' + query_endDate + '")';
+
+		queryData = Enumerable.From(jsonData)
+							  .Where(queryCondition)
+							  .Select('{date:$.TXYEAR + "\-" + customDate.months_to_key($.TXMONTH), value:parseInt(Commas.remove($.Number))}')
+							  .ToArray();
+		//update the chart
+		Chart.myChart.setData(queryData);
+		
+	}
+
+
+});	
+		
+	</script>
+</body>
+</html>

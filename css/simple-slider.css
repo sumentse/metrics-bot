@@ -1,0 +1,24 @@
+.slider {
+  width: 300px;
+}
+
+.slider > .dragger {
+  background: url("../assets/dragger.png");
+  width: 20px;
+  height: 20px;
+}
+
+
+.slider > .track, .slider > .highlight-track {
+  background: #29ABE2;
+
+
+
+  height: 2px;
+}
+
+.slider > .highlight-track {
+	background-color: #8DCA09;
+
+}
+
